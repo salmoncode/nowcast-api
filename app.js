@@ -17,20 +17,19 @@ const map = (value, fromMin, fromMax, toMin, toMax) => {
     return result;
 };
 
-app.get("/:lng/:lat", (req, res) => {
+app.get("/:dir/:time/:lng/:lat", (req, res) => {
     console.log(req.params);
     let lng = req.params.lng
     let lat = req.params.lat
 
-    console.log(lng, lat)
-
     let i = Math.floor(map(lng, 100, 170, 0, 64))
     let j = Math.floor(map(lat, 7, 61, 64, 0))
 
-    let x = Math.floor(map(lng, 100, 170, 0, mapLength) - (i * tileLength));
-    let y = Math.floor(map(lat, 7, 61, mapLength, 0) - (j * tileLength));
+    let x = Math.floor(map(lng, 100, 170, 0, mapLength) - (i * tileLength))
+    let y = Math.floor(map(lat, 7, 61, mapLength, 0) - (j * tileLength)) 
 
-    let url = "https://www.jma.go.jp/jp/highresorad/highresorad_tile/HRKSNC/201805141050/201805141050/zoom6/" + i + "_" + j + ".png";
+    let url = "https://www.jma.go.jp/jp/highresorad/highresorad_tile/HRKSNC/201805141050/201805141050/zoom6/" + i + "_" + j + ".png"
+    let mapUrl = "https://www.jma.go.jp/jp/commonmesh/map_tile/MAP_COLOR/none/anal/zoom6/" + i + "_" + j + ".png"
 
     Jimp.read(url)
         .then(image => {
@@ -74,13 +73,10 @@ app.get("/:lng/:lat", (req, res) => {
                 result.min = 80
                 result.max = 80
             }
-
-            console.log(rgbColor)
-            console.log("i:" + i, "j:" + j)
-            console.log("x:" + x, "y" + y)
-            console.log("result: " + result.min, result.max)            
-            res.send("<img src='" + url + "'><p></p>")
-            // res.send(result)
+     
+            result.imageUrl = url
+            result.mapUrl = mapUrl
+            res.send(result)
         });
 })
 
