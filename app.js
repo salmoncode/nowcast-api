@@ -17,6 +17,18 @@ const map = (value, fromMin, fromMax, toMin, toMax) => {
     return result;
 };
 
+const colors = [
+    {r:0,g:0,b:0,min:0,max:0},
+    {r:242,g:242,b:255,min:0,max:1},
+    {r:160,g:210,b:255,min:1,max:5},
+    {r:33,g:140,b:255,min:5,max:10},
+    {r:0,g:65,b:255,min:10,max:20},
+    {r:255,g:245,b:0,min:20,max:30},
+    {r:255,g:153,b:0,min:30,max:50},
+    {r:255,g:32,b:0,min:50,max:80},
+    {r:180,g:0,b:104,min:80,max:100}
+]
+
 app.get("/:dir/:time/:lng/:lat", (req, res) => {
     console.log(req.params);
     let lng = req.params.lng
@@ -26,9 +38,9 @@ app.get("/:dir/:time/:lng/:lat", (req, res) => {
     let j = Math.floor(map(lat, 7, 61, 64, 0))
 
     let x = Math.floor(map(lng, 100, 170, 0, mapLength) - (i * tileLength))
-    let y = Math.floor(map(lat, 7, 61, mapLength, 0) - (j * tileLength)) 
+    let y = Math.floor(map(lat, 7, 61, mapLength, 0) - (j * tileLength))
 
-    let url = "https://www.jma.go.jp/jp/highresorad/highresorad_tile/HRKSNC/201805141050/201805141050/zoom6/" + i + "_" + j + ".png"
+    let url = "https://www.jma.go.jp/jp/highresorad/highresorad_tile/HRKSNC/" + req.params.dir + "/" + req.params.time + "/zoom6/" + i + "_" + j + ".png"
     let mapUrl = "https://www.jma.go.jp/jp/commonmesh/map_tile/MAP_COLOR/none/anal/zoom6/" + i + "_" + j + ".png"
 
     Jimp.read(url)
@@ -37,41 +49,12 @@ app.get("/:dir/:time/:lng/:lat", (req, res) => {
             let rgbColor = Jimp.intToRGBA(hexColor);
             let result = {'min':"null"};
 
-            if (rgbColor.r == 0 && rgbColor.g == 0 && rgbColor.b == 0) {
-                result.min = 0
-                result.max = 0
-            }
-            if (rgbColor.r == 242 && rgbColor.g == 242 && rgbColor.b == 255) {
-                result.min = 0
-                result.max = 1
-            }
-            if (rgbColor.r == 160 && rgbColor.g == 210 && rgbColor.b == 255) {
-                result.min = 1
-                result.max = 5
-            }
-            if (rgbColor.r == 33 && rgbColor.g == 140 && rgbColor.b == 255) {
-                result.min = 5
-                result.max = 10
-            }
-            if (rgbColor.r == 0 && rgbColor.g == 65 && rgbColor.b == 255) {
-                result.min = 10
-                result.max = 20
-            }
-            if (rgbColor.r == 255 && rgbColor.g == 245 && rgbColor.b == 0) {
-                result.min = 20
-                result.max = 30
-            }
-            if (rgbColor.r == 255 && rgbColor.g == 153 && rgbColor.b == 0) {
-                result.min = 30
-                result.max = 50
-            }
-            if (rgbColor.r == 255 && rgbColor.g == 32 && rgbColor.b == 0) {
-                result.min = 50
-                result.max = 80
-            }
-            if (rgbColor.r == 180 && rgbColor.g == 0 && rgbColor.b == 104) {
-                result.min = 80
-                result.max = 80
+            for (let color of colors) {
+                if (rgbColor.r == color.r && rgbColor.g == color.g && rgbColor.b == color.b) {
+                    result.min = color.min
+                    result.max = color.max
+                    break
+                }
             }
      
             result.imageUrl = url
