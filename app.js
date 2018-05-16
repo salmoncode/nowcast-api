@@ -19,6 +19,7 @@ const map = (value, fromMin, fromMax, toMin, toMax) => {
 
 const colors = [
     {r:0,g:0,b:0,min:0,max:0},
+    {r:255,g:255,b:255,min:0,max:0},
     {r:242,g:242,b:255,min:0,max:1},
     {r:160,g:210,b:255,min:1,max:5},
     {r:33,g:140,b:255,min:5,max:10},
@@ -53,10 +54,13 @@ app.get("/:dir/:time/:lng/:lat", (req, res) => {
                 if (rgbColor.r == color.r && rgbColor.g == color.g && rgbColor.b == color.b) {
                     result.min = color.min
                     result.max = color.max
-                    break
+                  break
                 }
             }
-     
+
+            result.r = rgbColor.r
+            result.g = rgbColor.g
+            result.b = rgbColor.b     
             result.imageUrl = url
             result.mapUrl = mapUrl
             res.send(result)
