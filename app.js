@@ -30,7 +30,28 @@ const colors = [
     {r:180,g:0,b:104,min:80,max:100}
 ]
 
-app.get("/:dir/:time/:lng/:lat", (req, res) => {
+const getTimeStamps = (strTime, offset = 0) => {    
+    let year = parseInt(strTime.slice(0,4))
+    let month = parseInt(strTime.slice(4,6)) - 1 
+    let day = parseInt(strTime.slice(6,8))
+    let hour = parseInt(strTime.slice(8,10))
+    let minute = parseInt(strTime.slice(10,12))
+
+    const date = new Date(year,month,day,hour,minute)
+    date.setMinutes( date.getMinutes() + Number(offset))
+
+    year = ('0000' + date.getFullYear()).slice(-4)
+    month = ('00' + (date.getMonth()+1)).slice(-2)
+    day = ('00' + date.getDate()).slice(-2)
+    hour = ('00' + date.getHours()).slice(-2)
+    minute = ('00' + date.getMinutes()).slice(-2)
+  
+    const stamp2 = year + month + day + hour + minute
+    const stamp1 = offset > -1 ? strTime : stamp2
+    return [stamp1, stamp2]
+}
+
+app.get("/:time/:diff/:lng/:lat", (req, res) => {
     console.log(req.params);
     let lng = req.params.lng
     let lat = req.params.lat
@@ -41,7 +62,8 @@ app.get("/:dir/:time/:lng/:lat", (req, res) => {
     let x = Math.floor(map(lng, 100, 170, 0, mapLength) - (i * tileLength))
     let y = Math.floor(map(lat, 7, 61, mapLength, 0) - (j * tileLength))
 
-    let url = "https://www.jma.go.jp/jp/highresorad/highresorad_tile/HRKSNC/" + req.params.dir + "/" + req.params.time + "/zoom6/" + i + "_" + j + ".png"
+    let ts = getTimeStamps(req.params.time,req.params.diff)
+    let url = "https://www.jma.go.jp/jp/highresorad/highresorad_tile/HRKSNC/" + ts[0] + "/" + ts[1] + "/zoom6/" + i + "_" + j + ".png"
     let mapUrl = "https://www.jma.go.jp/jp/commonmesh/map_tile/MAP_COLOR/none/anal/zoom6/" + i + "_" + j + ".png"
 
     Jimp.read(url)
