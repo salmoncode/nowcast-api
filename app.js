@@ -26,9 +26,9 @@ const colors = [
     {r:160,g:210,b:255,min:1,max:5},
     {r:33,g:140,b:255,min:5,max:10},
     {r:0,g:65,b:255,min:10,max:20},
-    {r:255,g:245,b:0,min:20,max:30},
+    {r:250,g:245,b:0,min:20,max:30},
     {r:255,g:153,b:0,min:30,max:50},
-    {r:255,g:32,b:0,min:50,max:80},
+    {r:255,g:40,b:0,min:50,max:80},
     {r:180,g:0,b:104,min:80,max:100}
 ]
 
@@ -78,7 +78,7 @@ app.get("/:diff/:lng/:lat", (req, res) => {
 
             result.r = rgbColor.r
             result.g = rgbColor.g
-            result.b = rgbColor.b     
+            result.b = rgbColor.b
             result.imageUrl = url
             result.mapUrl = mapUrl
             res.send(result)
